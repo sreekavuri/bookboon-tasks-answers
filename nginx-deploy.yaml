@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+    ## Creating the hostpath volume
+      volumes:
+        - name: nginx-conf
+          hostPath:
+            path: /nginx-data
+            type: DirectoryOrCreate
+      containers:
+      - name: nginx
+        image: nginx:1.16.1
+      ## Attaching the volume to requested mount point.
+        volumeMounts:
+          - mountPath: /etc/nginx/conf.d/
+            name: nginx-conf
+        ports:
+        - containerPort: 80
